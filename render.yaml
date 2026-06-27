@@ -1,0 +1,69 @@
+services:
+  - type: web
+    name: beesms-reseller-pro
+    runtime: node
+    plan: free
+    branch: main
+
+    buildCommand: npm install
+    startCommand: npm start
+
+    autoDeploy: true
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: 10000
+
+      - key: BOT_TOKEN
+        sync: false
+
+      - key: MONGODB_URI
+        sync: false
+
+      - key: JWT_SECRET
+        sync: false
+
+      - key: ADMIN_ID
+        sync: false
+
+      - key: BEESMS_API_URL
+        sync: false
+
+      - key: BEESMS_API_TOKEN
+        sync: false
+
+      - key: PAYHERE_MERCHANT_ID
+        sync: false
+
+      - key: PAYHERE_MERCHANT_SECRET
+        sync: false
+
+      - key: STRIPE_SECRET_KEY
+        sync: false
+
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+
+      - key: BINANCE_API_KEY
+        sync: false
+
+      - key: BINANCE_SECRET_KEY
+        sync: false
+
+      - key: BINANCE_WEBHOOK_SECRET
+        sync: false
+
+      - key: BANK_NAME
+        sync: false
+
+      - key: ACCOUNT_NAME
+        sync: false
+
+      - key: ACCOUNT_NUMBER
+        sync: false
+
+      - key: WEBHOOK_URL
+        sync: false
