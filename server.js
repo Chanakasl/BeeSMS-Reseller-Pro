@@ -1,11 +1,13 @@
 require("dotenv").config();
 
 const express = require("express");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
 const cors = require("cors");
+const morgan = require("morgan");
 
-const { Bot } = require("grammy");
+const connectDatabase = require("./config/database");
+
+// Initialize Bot Commands
+const bot = require("./bot");
 
 const app = express();
 
@@ -16,45 +18,45 @@ app.use(morgan("dev"));
 
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Error:", err));
-
-// Telegram Bot
-const bot = new Bot(process.env.BOT_TOKEN);
-
-// Start Command
-bot.command("start", async (ctx) => {
-  await ctx.reply(
-`👋 Welcome to BeeSMS Reseller Pro
-
-🇱🇰 සිංහල
-ඔබගේ භාෂාව තෝරන්න.
-
-🇬🇧 English
-Please select your language.
-
-(Buttons will be added in Part 2)`
-  );
+// Home Route
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        name: "BeeSMS Reseller Pro",
+        version: "1.0.0",
+        status: "Running"
+    });
 });
 
 // Health Check
-app.get("/", (req, res) => {
-  res.json({
-    status: true,
-    project: "BeeSMS Reseller Pro",
-    version: "1.0.0",
-    server: "Running"
-  });
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        database: "Connected",
+        bot: "Running"
+    });
 });
 
-// Start Express
-app.listen(PORT, async () => {
-  console.log(`🚀 Server Running on ${PORT}`);
+async function startServer() {
+    try {
 
-  await bot.start();
+        // Connect MongoDB
+        await connectDatabase();
 
-  console.log("🤖 Telegram Bot Started");
-});
+        // Start Telegram Bot
+        await bot.start();
+
+        console.log("🤖 Telegram Bot Started");
+
+        // Start Express
+        app.listen(PORT, () => {
+            console.log(`🚀 Server Running on Port ${PORT}`);
+        });
+
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+}
+
+startServer();
